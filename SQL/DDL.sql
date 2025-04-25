@@ -75,14 +75,14 @@ ALTER TABLE `order`
 	ADD PRIMARY KEY (`orderID`), 
 	ADD CONSTRAINT `order_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
 
-create table orderitem (
+create table orderItem (
 	`orderItemID` int NOT NULL AUTO_INCREMENT,
 	`orderID` int NOT NULL,
 	`productID` int NOT NULL,
 	`quantity` int NOT NULL
 )
 
-ALTER TABLE `orderitem` 
+ALTER TABLE `orderItem` 
 	ADD PRIMARY KEY (`orderItemID`), 
 	ADD CONSTRAINT `orderItem_product_fk` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`) ON UPDATE CASCADE ON DELETE CASCADE, 
 	ADD CONSTRAINT `orderItem_order_fk` FOREIGN KEY (`orderID`) REFERENCES `order` (`orderID`) ON UPDATE CASCADE ON DELETE CASCADE;
