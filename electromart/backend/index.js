@@ -13,14 +13,19 @@ app.use(express.json());
 app.use("/api/products", productRoutes);
 app.use("/api/auth", authRoutes);
 
-db.getConnection((err, conn) => {
-  if (err) {
-    console.error("DB connection failed:", err.message);
-    process.exit(1);
-  }
-  console.log("Connected to DB");
-  conn.release();
-});
+const connectToDatabase = () => {
+  db.getConnection((err, conn) => {
+    if (err) {
+      console.error("DB connection failed, please wait while it starts:", err.message);
+      setTimeout(connectToDatabase, 5000);
+    } else {
+      console.log("Connected to DB");
+      conn.release();
+    }
+  });
+};
+
+connectToDatabase();
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

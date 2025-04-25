@@ -1,46 +1,43 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { register } from '../services/auth';
 
 export default function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    address: ""
-  });
+  const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', firstname: '', lastname: '', address: '' });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+      return alert('Passwords do not match!');
     }
-
-    // Simulate saving user data
-    localStorage.setItem("user", JSON.stringify(form));
-    alert("Account created!");
-    navigate("/login");
+    try {
+      const { username, password, firstname, lastname, address } = form;
+      await register({ username, password, firstname, lastname, address });
+      alert('Account created!');
+      navigate('/login');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Registration failed');
+    }
   };
 
   return (
     <main>
-      <h2>Create Your Account</h2>
+      <h2>Create Account</h2>
       <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" required onChange={handleChange} />
-        <input type="email" name="email" placeholder="Email" required onChange={handleChange} />
-        <input type="password" name="password" placeholder="Password" required onChange={handleChange} />
-        <input type="password" name="confirmPassword" placeholder="Confirm Password" required onChange={handleChange} />
-        <input name="firstName" placeholder="First Name" required onChange={handleChange} />
-        <input name="lastName" placeholder="Last Name" required onChange={handleChange} />
-        <input name="address" placeholder="Address" required onChange={handleChange} />
+        {['username','password','confirmPassword','firstname','lastname','address'].map((f) => (
+          <input
+            key={f}
+            name={f}
+            type={f.toLowerCase().includes('password') ? 'password' : 'text'}
+            placeholder={f.charAt(0).toUpperCase()+f.slice(1)}
+            required
+            onChange={handleChange}
+          />
+        ))}
         <button type="submit">Register</button>
       </form>
     </main>

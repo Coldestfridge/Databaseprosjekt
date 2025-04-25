@@ -1,35 +1,35 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { login } from '../services/auth';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({ username: '', password: '' });
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
-      alert("Invalid credentials");
-      return;
+    try {
+      const { data } = await login(form);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify({ userID: data.userID, username: data.username, isPrivileged: data.isPrivileged }));
+      alert('Welcome back!');
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Login failed');
     }
-
-    localStorage.setItem("loggedInUser", JSON.stringify(savedUser));
-    alert("Welcome back!");
-    navigate("/cart");
   };
 
   return (
     <main>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input name="username" placeholder="Username" required onChange={handleChange} />
+        <input type="password" name="password" placeholder="Password" required onChange={handleChange} />
         <button type="submit">Login</button>
-        <p>
-  Don't have an account? <a href="/register">Create one here</a>
-</p>
-
+        <p>Don't have an account? <a href="/register">Register here</a></p>
       </form>
     </main>
   );

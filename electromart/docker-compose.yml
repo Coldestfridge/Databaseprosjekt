@@ -1,13 +1,9 @@
-version: "3.8"
-
 services:
   mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    image: electromart-mysql
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -21,7 +17,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_USER=user
       - MYSQL_PASSWORD=userpassword
-      - MYSQL_DATABASE=mydatabase
+      - MYSQL_DATABASE=electromart
     depends_on:
       - mysql
     networks:
