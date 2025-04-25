@@ -17,7 +17,7 @@ export default function Home() {
 
     setUser(loggedInUser);
 
-    fetch("http://localhost:3001/api/products")
+    fetch("http://localhost:8000/api/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
