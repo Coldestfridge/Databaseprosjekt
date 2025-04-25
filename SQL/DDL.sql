@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `electromart`;
+CREATE DATABASE IF NOT EXISTS electromart;
+USE electromart;
 
 CREATE TABLE brand (
 	`brandID` int NOT NULL AUTO_INCREMENT,
