@@ -5,13 +5,13 @@ CREATE TABLE brand (
 	`brandID` int NOT NULL AUTO_INCREMENT,
 	`name` varchar(40) NOT NULL,
 	`description` varchar(200) NOT NULL
-)
+);
 
 CREATE TABLE category (
 	`categoryID` int NOT NULL AUTO_INCREMENT,
 	`name` varchar(40) NOT NULL,
 	`description` varchar(200) NOT NULL
-)
+);
 
 CREATE TABLE product (
 	`productID` int NOT NULL AUTO_INCREMENT,
@@ -21,25 +21,25 @@ CREATE TABLE product (
 	`description` varchar(200) NOT NULL,
 	`price` decimal(10,2) NOT NULL,  
 	`stockQuantity` int NOT NULL
-)
+);
 
 CREATE TABLE userInfo (
 	`userID` int NOT NULL,
 	`firstname` varchar(40) NOT NULL,
 	`lastname` varchar(40) NOT NULL,
 	`address` varchar(100) NOT NULL
-)
+);
 
 CREATE TABLE loginDetails (
 	`username` varchar(40) NOT NULL,
 	`password` varchar(60) NOT NULL
-)
+);
 
 CREATE TABLE user (
 	`userID` int NOT NULL AUTO_INCREMENT,
 	`username` varchar(40) NOT NULL,
 	`isPrivileged` BOOLEAN NOT NULL DEFAULT FALSE
-)
+);
 
 CREATE TABLE order (
 	`orderID` int NOT NULL AUTO_INCREMENT,
@@ -47,26 +47,26 @@ CREATE TABLE order (
 	`orderDate` date NOT NULL,
 	`totalAmount` decimal(10,2) NOT NULL,
 	`status` varchar(100) NOT NULL
-)
+);
 
 CREATE TABLE orderItem (
 	`orderItemID` int NOT NULL AUTO_INCREMENT,
 	`orderID` int NOT NULL,
 	`productID` int NOT NULL,
 	`quantity` int NOT NULL
-)
+);
 
 CREATE TABLE cart (
 	`userID` int NOT NULL,
 	`status` varchar(100) NOT NULL
-)
+);
 
 
 CREATE TABLE cartItem (
 	`cartID` int NOT NULL,
 	`productID` int NOT NULL,
 	`quantity` int NOT NULL
-)
+);
 
 CREATE TABLE payment (
 	`paymentID` int NOT NULL AUTO_INCREMENT,
@@ -75,7 +75,7 @@ CREATE TABLE payment (
 	`amount` decimal(10,2) NOT NULL,
 	`paymentDate` date NOT NULL,
 	`status` varchar(100) NOT NULL
-)
+);
 	
 CREATE TABLE review (
 	`productID` int NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE review (
 	`date` date NOT NULL,
 	`text` varchar(40) NOT NULL,
 	`rating` float NOT NULL
-)
+);
 
 ALTER TABLE `brand` 
 	ADD PRIMARY KEY (`brandID`),
