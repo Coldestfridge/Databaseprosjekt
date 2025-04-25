@@ -3,13 +3,13 @@ USE electromart;
 
 CREATE TABLE `brand` (
 	`brandID` int NOT NULL,
-	`name` varchar(40) NOT NULL,
+	`name` varchar(100) NOT NULL,
 	`description` varchar(200) NOT NULL
 );
 
 CREATE TABLE `category` (
 	`categoryID` int NOT NULL,
-	`name` varchar(40) NOT NULL,
+	`name` varchar(100) NOT NULL,
 	`description` varchar(200) NOT NULL
 );
 
@@ -17,7 +17,7 @@ CREATE TABLE `product` (
 	`productID` int NOT NULL,
 	`categoryID` int NOT NULL,
 	`brandID` int NOT NULL,
-	`name` varchar(40) NOT NULL,
+	`name` varchar(100) NOT NULL,
 	`description` varchar(200) NOT NULL,
 	`price` decimal(10,2) NOT NULL,  
 	`stockQuantity` int NOT NULL
@@ -101,20 +101,16 @@ ALTER TABLE `product`
 	ADD CONSTRAINT `product_category_fk` FOREIGN KEY (`categoryID`) REFERENCES `category` (`categoryID`) ON UPDATE CASCADE ON DELETE CASCADE,
 	MODIFY productID INT NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `userInfo` 
-	ADD PRIMARY KEY (`userID`), 
-	ADD CONSTRAINT `userInfo_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
 ALTER TABLE `loginDetails` 
 	ADD PRIMARY KEY (`username`);
 
 
 ALTER TABLE `user` 
 	ADD PRIMARY KEY (`userID`), 
-	ADD CONSTRAINT `user_loginDetails_fk` FOREIGN KEY (`username`) REFERENCES `loginDetails` (`username`) ON UPDATE CASCADE ON DELETE CASCADE,
 	MODIFY userID INT NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `userInfo` 
+	ADD CONSTRAINT `userInfo_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE `order` 
 	ADD PRIMARY KEY (`orderID`), 
@@ -153,7 +149,7 @@ ALTER TABLE `review`
 CREATE ROLE `customer`;
 CREATE ROLE `employee`;
 
-GRANT SELECT ON electromart
+GRANT SELECT ON electromart.* TO 'customer';
 
 INSERT INTO `brand` (`name`, `description`) VALUES
 ('Apple', 'Electronic Devices'),
@@ -179,10 +175,10 @@ INSERT INTO `product` (`categoryID`, `brandID`, `name`, `description`, `price`, 
 (5, 6, 'Philips Oneblade Pro 360 QP6542', '90 minutes use time, OneBlade-technology, Waterproof', 699.00, 100);
 
 INSERT INTO `loginDetails` (`username`, `password`) VALUES
-('ola.normann@icloud.com', ''),
-('kari.traa@gmail.com', ''),
-('john.doe@hotmail.com', ''),
-('ravi.beas@outlook.com', '');
+('ola.normann@icloud.com', 'placeholder'),
+('kari.traa@gmail.com', 'placeholder'),
+('john.doe@hotmail.com', 'placeholder'),
+('ravi.beas@outlook.com', 'placeholder');
 
 INSERT INTO `user` (`username`, `isPrivileged`) VALUES
 ('ola.normann@icloud.com', FALSE),
@@ -229,6 +225,4 @@ INSERT INTO `review` (`productID`, `userID`, `date`, `text`, `rating`) VALUES
 (1, 1, '2025-04-01', 'This is a great product', 5),
 (2, 2, '2025-04-02', 'This is an ok product', 4),
 (3, 3, '2025-04-03', 'This is a bad product', 1),
-(4, 4, '2025-04-04', 'This is a great product', 5),
-(5, 5, '2025-04-05', 'This is a meh product', 3),
-(6, 6, '2025-04-06', 'This is a not so good product', 2);
+(4, 4, '2025-04-04', 'This is a great product', 5);
