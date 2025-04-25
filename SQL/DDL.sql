@@ -1,16 +1,18 @@
-create table brand (
+CREATE DATABASE IF NOT EXISTS `electromart`;
+
+CREATE TABLE brand (
 	`brandID` int NOT NULL AUTO_INCREMENT,
 	`name` varchar(40) NOT NULL,
 	`description` varchar(200) NOT NULL
 )
 
-create table category (
+CREATE TABLE category (
 	`categoryID` int NOT NULL AUTO_INCREMENT,
 	`name` varchar(40) NOT NULL,
 	`description` varchar(200) NOT NULL
 )
 
-create table product (
+CREATE TABLE product (
 	`productID` int NOT NULL AUTO_INCREMENT,
 	`categoryID` int NOT NULL,
 	`brandID` int NOT NULL,
@@ -20,25 +22,25 @@ create table product (
 	`stockQuantity` int NOT NULL
 )
 
-create table userInfo (
+CREATE TABLE userInfo (
 	`userID` int NOT NULL,
 	`firstname` varchar(40) NOT NULL,
 	`lastname` varchar(40) NOT NULL,
 	`address` varchar(100) NOT NULL
 )
 
-create table loginDetails (
+CREATE TABLE loginDetails (
 	`username` varchar(40) NOT NULL,
 	`password` varchar(60) NOT NULL
 )
 
-create table user (
+CREATE TABLE user (
 	`userID` int NOT NULL AUTO_INCREMENT,
 	`username` varchar(40) NOT NULL,
 	`isPrivileged` BOOLEAN NOT NULL DEFAULT FALSE
 )
 
-create table order (
+CREATE TABLE order (
 	`orderID` int NOT NULL AUTO_INCREMENT,
 	`userID` int NOT NULL,
 	`orderDate` date NOT NULL,
@@ -46,26 +48,26 @@ create table order (
 	`status` varchar(100) NOT NULL
 )
 
-create table orderItem (
+CREATE TABLE orderItem (
 	`orderItemID` int NOT NULL AUTO_INCREMENT,
 	`orderID` int NOT NULL,
 	`productID` int NOT NULL,
 	`quantity` int NOT NULL
 )
 
-create table cart (
+CREATE TABLE cart (
 	`userID` int NOT NULL,
 	`status` varchar(100) NOT NULL
 )
 
 
-create table cartItem (
+CREATE TABLE cartItem (
 	`cartID` int NOT NULL,
 	`productID` int NOT NULL,
 	`quantity` int NOT NULL
 )
 
-create table payment (
+CREATE TABLE payment (
 	`paymentID` int NOT NULL AUTO_INCREMENT,
 	`orderID` int NOT NULL,
 	`paymentMethod` varchar(40) NOT NULL,
@@ -74,7 +76,7 @@ create table payment (
 	`status` varchar(100) NOT NULL
 )
 	
-create table review (
+CREATE TABLE review (
 	`productID` int NOT NULL,
 	`userID` int NOT NULL,
 	`date` date NOT NULL,
