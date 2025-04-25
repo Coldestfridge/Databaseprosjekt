@@ -47,5 +47,32 @@ INSERT INTO `cart` (`userID`, `status`) VALUES
 (4, 'Items available');
 
 INSERT INTO `cartItem` (`cartID`, `productID`, `quantity`) VALUES
-(),
-();
+(1,1,1),
+(1,3,1),
+(1,6,1),
+(2,2,1),
+(2,5,1),
+(3,4,1);
+
+INSERT INTO `order` (`userID`, `orderDate`, `totalAmount`, `status`) VALUES
+(1, '2025-04-01', 12500.00, 'Ordered'),
+(2, '2025-04-02', 19990.00, 'Preparing'),
+(3, '2025-04-03', 11995.00, 'Ordered');
+
+INSERT INTO `orderItem` (`orderID`, `productID`, `quantity`) VALUES
+(1,1,1),
+(2,2,1),
+(3,5,1);
+
+INSERT INTO `payment` (`orderID`, `paymentMethod`, `amount`, `paymentDate`, `status`) VALUES
+(1, 'Credit Card', 12500.00, '2025-04-01', 'Paid'),
+(2, 'PayPal', 19990.00, '2025-04-02', 'Paid'),
+(3, 'Credit Card', 11995.00, '2025-04-03', 'Paid');
+
+INSERT INTO `review` (`productID`, `userID`, `date`, `text`, `rating`) VALUES
+(1, 1, '2025-04-01', 'This is a great product', 5),
+(2, 2, '2025-04-02', 'This is an ok product', 4),
+(3, 3, '2025-04-03', 'This is a bad product', 1),
+(4, 4, '2025-04-04', 'This is a great product', 5),
+(5, 5, '2025-04-05', 'This is a meh product', 3),
+(6, 6, '2025-04-06', 'This is a not so good product', 2);
