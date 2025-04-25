@@ -134,3 +134,5 @@ ALTER TABLE `review`
 	ADD PRIMARY KEY (`productID`, `userID`, `date`), 
 	ADD CONSTRAINT `review_product_fk` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`) ON UPDATE CASCADE ON DELETE CASCADE, 
 	ADD CONSTRAINT `review_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
