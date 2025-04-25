@@ -21,6 +21,12 @@ INSERT INTO `product` (`categoryID`, `brandID`, `name`, `description`, `price`, 
 (3, 5, 'Electrolux Fridge GRG7MD39W', 'H: 186cm, B: 59.5cm, D: 65cm, 389l', 11995.00, 10),
 (5, 6, 'Philips Oneblade Pro 360 QP6542', '90 minutes use time, OneBlade-technology, Waterproof', 699.00, 100);
 
+INSERT INTO `loginDetails` (`username`, `password`) VALUES
+('ola.normann@icloud.com', ''),
+('kari.traa@gmail.com', ''),
+('john.doe@hotmail.com', ''),
+('ravi.beas@outlook.com', '');
+
 INSERT INTO `user` (`username`, `isPrivileged`) VALUES
 ('ola.normann@icloud.com', FALSE),
 ('kari.traa@gmail.com', FALSE),
@@ -32,13 +38,6 @@ INSERT INTO `userInfo` (`userID`,`firstname`, `lastname`, `address`) VALUES
 (2, 'Kari', 'Traa', 'Kuleloypa 1'),
 (3, 'John', 'Doe', 'American Street 16'),
 (4, 'Ravi', 'Beas', 'Street Street 1');
-
-MÅ FIKSE BCRYPT HASHA PASSORD
-INSERT INTO `loginDetails` (`username`, `password`) VALUES
-('ola.normann@icloud.com', ''),
-('kari.traa@gmail.com', ''),
-('john.doe@hotmail.com', ''),
-('ravi.beas@outlook.com', '');
 
 INSERT INTO `cart` (`userID`, `status`) VALUES
 (1, 'Some items unavailable'),
