@@ -17,7 +17,7 @@ CREATE TABLE `product` (
 	`productID` int NOT NULL,
 	`categoryID` int NOT NULL,
 	`brandID` int NOT NULL,
-	`name` varchar(40) NOT NULL,
+	`name` varchar(100) NOT NULL,
 	`description` varchar(200) NOT NULL,
 	`price` decimal(10,2) NOT NULL,  
 	`stockQuantity` int NOT NULL
@@ -148,7 +148,15 @@ ALTER TABLE `review`
 	ADD CONSTRAINT `review_product_fk` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`) ON UPDATE CASCADE ON DELETE CASCADE, 
 	ADD CONSTRAINT `review_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
 
+DROP TABLE IF EXISTS `product-view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER =`root`@`localhost` SQL SECURITY DEFINER VIEW `product-view` AS
+SELECT `product`.`productID`, `product`.`categoryID`, `product`.`brandID`, `product`.`name`, `product`.`description`, `product`.`price`, `product`.`stockQuantity`, `brand`.`name` AS `brandName`, `category`.`name` AS `categoryName` FROM ((`product` JOIN `brand` ON (`product`.`brandID` = `brand`.`brandID`)) JOIN `category` ON (`product`.`categoryID` = `category`.`categoryID`));
+
+
+
 CREATE ROLE `customer`;
 CREATE ROLE `employee`;
 
-GRANT SELECT ON electromart
+GRANT SELECT ON `electromart.product-view` TO `customer`;
+GRANT SELECT, INSERT, UPDATE, DELETE ON `electromart`.* TO `employee`;
