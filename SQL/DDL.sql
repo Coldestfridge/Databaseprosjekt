@@ -101,11 +101,6 @@ ALTER TABLE `product`
 	ADD CONSTRAINT `product_category_fk` FOREIGN KEY (`categoryID`) REFERENCES `category` (`categoryID`) ON UPDATE CASCADE ON DELETE CASCADE,
 	MODIFY productID INT NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `userInfo` 
-	ADD PRIMARY KEY (`userID`), 
-	ADD CONSTRAINT `userInfo_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
 ALTER TABLE `loginDetails` 
 	ADD PRIMARY KEY (`username`);
 
@@ -115,6 +110,9 @@ ALTER TABLE `user`
 	ADD CONSTRAINT `user_loginDetails_fk` FOREIGN KEY (`username`) REFERENCES `loginDetails` (`username`) ON UPDATE CASCADE ON DELETE CASCADE,
 	MODIFY userID INT NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `userInfo` 
+	ADD PRIMARY KEY (`userID`), 
+	ADD CONSTRAINT `userInfo_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE `order` 
 	ADD PRIMARY KEY (`orderID`), 
