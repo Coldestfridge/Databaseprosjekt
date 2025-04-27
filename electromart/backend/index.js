@@ -13,19 +13,23 @@ app.use(express.json());
 app.use("/api/products", productRoutes);
 app.use("/api/auth", authRoutes);
 
-const connectToDatabase = () => {
-  db.getConnection((err, conn) => {
-    if (err) {
-      console.error("DB connection failed, please wait while it starts:", err.message);
-      setTimeout(connectToDatabase, 5000);
-    } else {
-      console.log("Connected to DB");
-      conn.release();
-    }
-  });
-};
+app.use("/api/products", productRoutes);
+app.use("/api/auth", authRoutes);
 
-connectToDatabase();
+// --- Asynkron database‐kobling med promise‐API ---
+async function connectToDatabase() {
+  try {
+    // db er nå en mysql2/promise‐pool
+    const conn = await db.getConnection();
+    console.log("Connected to DB");
+    conn.release();
+  } catch (err) {
+    console.log("DB connection failed, retry in 5s:", err.message);
+    setTimeout(connectToDatabase, 5000);
+  }
+}
+
++connectToDatabase();
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
