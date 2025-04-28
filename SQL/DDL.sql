@@ -169,17 +169,22 @@ CREATE INDEX `idx_product_category_brand` ON `product`(`categoryID`, `brandID`);
 
 -- View for product details with brand and category names
 DROP VIEW IF EXISTS `product_view`;
-
 CREATE VIEW `product_view` AS
 SELECT `product`.`productID`, `product`.`categoryID`, `product`.`brandID`, `product`.`name`, `product`.`description`, `product`.`price`, `product`.`stockQuantity`, `brand`.`name` AS `brandName`, `category`.`name` AS `categoryName` 
 FROM ((`product` JOIN `brand` ON (`product`.`brandID` = `brand`.`brandID`)) JOIN `category` ON (`product`.`categoryID` = `category`.`categoryID`));
 
+-- View for order details
+DROP VIEW IF EXISTS `order_view`;
+CREATE VIEW `user_orders` AS
+SELECT `order.orderID`, `order.userID`, `order.orderDate`, `order.totalAmount`, `order.status`
+FROM `order` o;
+
+
 -- View for payment details to prevent sensitive data exposure
 DROP VIEW IF EXISTS `payment_view`;
-
 CREATE VIEW `payment_view` AS
-SELECT `payment`.`paymentID`, `payment`.`orderID`, `payment`.`paymentMethod`, `payment`.`amount`, `payment`.`paymentDate`, `payment`.`status`, `order`.`userID` AS `orderUserID`, `user`.`isPrivileged`
-FROM ((`payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`)) JOIN `user` ON (`order`.`userID` = `user`.`userID`));
+SELECT `payment`.`paymentID`, `payment`.`orderID`, `payment`.`paymentMethod`, `payment`.`amount`, `payment`.`paymentDate`, `payment`.`status`, `order`.`userID` AS `orderUserID`
+FROM `payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`));
 
 -- CREATE ROLES AND PERMISSIONS
 
