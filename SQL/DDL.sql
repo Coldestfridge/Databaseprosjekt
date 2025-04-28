@@ -175,16 +175,16 @@ FROM ((`product` JOIN `brand` ON (`product`.`brandID` = `brand`.`brandID`)) JOIN
 
 -- View for order details
 DROP VIEW IF EXISTS `order_view`;
-CREATE VIEW `user_orders` AS
-SELECT `order.orderID`, `order.userID`, `order.orderDate`, `order.totalAmount`, `order.status`
-FROM `order` o;
+CREATE VIEW `order_view` AS
+SELECT `order`.`orderID`, `order`.`userID`, `order`.`orderDate`, `order`.`totalAmount`, `order`.`status`
+FROM `order`;
 
 
 -- View for payment details to prevent sensitive data exposure
 DROP VIEW IF EXISTS `payment_view`;
 CREATE VIEW `payment_view` AS
 SELECT `payment`.`paymentID`, `payment`.`orderID`, `payment`.`paymentMethod`, `payment`.`amount`, `payment`.`paymentDate`, `payment`.`status`, `order`.`userID` AS `orderUserID`
-FROM `payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`));
+FROM `payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`);
 
 -- CREATE ROLES AND PERMISSIONS
 
