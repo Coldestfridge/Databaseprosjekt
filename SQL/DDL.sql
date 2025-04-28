@@ -1,6 +1,8 @@
 CREATE DATABASE IF NOT EXISTS electromart;
 USE electromart;
 
+-- CREATE TABLES
+
 CREATE TABLE `brand` (
 	`brandID` int NOT NULL,
 	`name` varchar(40) NOT NULL,
@@ -17,7 +19,7 @@ CREATE TABLE `product` (
 	`productID` int NOT NULL,
 	`categoryID` int NOT NULL,
 	`brandID` int NOT NULL,
-	`name` varchar(40) NOT NULL,
+	`name` varchar(100) NOT NULL,
 	`description` varchar(200) NOT NULL,
 	`price` decimal(10,2) NOT NULL,  
 	`stockQuantity` int NOT NULL
@@ -85,6 +87,8 @@ CREATE TABLE `review` (
 	`rating` float NOT NULL
 );
 
+-- ALTER TABLES TO ADD CONTRAINTS
+
 ALTER TABLE `brand` 
 	ADD PRIMARY KEY (`brandID`),
 	ADD UNIQUE (`name`),
@@ -148,7 +152,44 @@ ALTER TABLE `review`
 	ADD CONSTRAINT `review_product_fk` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`) ON UPDATE CASCADE ON DELETE CASCADE, 
 	ADD CONSTRAINT `review_user_fk` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE CASCADE ON DELETE CASCADE;
 
+-- ADD INDEXES
+-- Foreign Keys Indexes
+CREATE INDEX idx_product_categoryID ON `product`(`categoryID`);
+CREATE INDEX idx_product_brandID ON `product`(`brandID`);
+CREATE INDEX idx_orderItem_productID ON `orderItem`(`productID`);
+CREATE INDEX idx_orderItem_orderID ON `orderItem`(`orderID`);
+CREATE INDEX idx_order_userID ON `order`(`userID`);
+CREATE INDEX idx_payment_orderID ON `payment`(`orderID`);
+-- Username Index
+CREATE INDEX `idx_user_username` ON `user`(`username`);
+-- Composite Index on product
+CREATE INDEX `idx_product_category_brand` ON `product`(`categoryID`, `brandID`);
+
+-- CREATE VIEWS
+
+-- View for product details with brand and category names
+DROP VIEW IF EXISTS `product_view`;
+CREATE VIEW `product_view` AS
+SELECT `product`.`productID`, `product`.`categoryID`, `product`.`brandID`, `product`.`name`, `product`.`description`, `product`.`price`, `product`.`stockQuantity`, `brand`.`name` AS `brandName`, `category`.`name` AS `categoryName` 
+FROM ((`product` JOIN `brand` ON (`product`.`brandID` = `brand`.`brandID`)) JOIN `category` ON (`product`.`categoryID` = `category`.`categoryID`));
+
+-- View for order details
+DROP VIEW IF EXISTS `order_view`;
+CREATE VIEW `user_orders` AS
+SELECT `order.orderID`, `order.userID`, `order.orderDate`, `order.totalAmount`, `order.status`
+FROM `order` o;
+
+
+-- View for payment details to prevent sensitive data exposure
+DROP VIEW IF EXISTS `payment_view`;
+CREATE VIEW `payment_view` AS
+SELECT `payment`.`paymentID`, `payment`.`orderID`, `payment`.`paymentMethod`, `payment`.`amount`, `payment`.`paymentDate`, `payment`.`status`, `order`.`userID` AS `orderUserID`
+FROM `payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`));
+
+-- CREATE ROLES AND PERMISSIONS
+
 CREATE ROLE `customer`;
 CREATE ROLE `employee`;
 
-GRANT SELECT ON electromart
+GRANT SELECT ON `product_view` TO `customer`;
+GRANT SELECT, INSERT, UPDATE, DELETE ON `electromart`.* TO `employee`;
