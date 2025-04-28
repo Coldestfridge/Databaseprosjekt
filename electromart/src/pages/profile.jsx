@@ -5,7 +5,7 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({});
+  const [editForm, setEditForm] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,113 +14,209 @@ export default function Profile() {
       navigate("/login");
     } else {
       setUser(storedUser);
-      setForm(storedUser);
-    }
 
-    const storedOrders = JSON.parse(localStorage.getItem("orders")) || [];
-    const userOrders = storedOrders.filter(order => order.user.email === storedUser?.email);
-    setOrders(userOrders);
+      fetch(`http://localhost:5000/api/order?userID=${storedUser.userID}`)
+        .then(res => res.json())
+        .then(data => {
+          setOrders(data);
+        })
+        .catch(err => {
+          console.error("Failed to fetch orders:", err);
+          setOrders([]);
+        });
+    }
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
-    navigate("/");
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
 
-  const handleEdit = () => setEditing(true);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleSaveChanges = async () => {
+    try {
+      const payload = {
+        userID: user.userID,
+        firstname: editForm.firstname,
+        lastname: editForm.lastname,
+        address: editForm.address,
+        username: editForm.username,
+        password: editForm.password // New!
+      };
+  
+      const response = await fetch("http://localhost:5000/api/updateProfile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        const updatedUser = {
+          ...user,
+          firstname: editForm.firstname,
+          lastname: editForm.lastname,
+          address: editForm.address,
+          username: editForm.username
+        };
+  
+        localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setEditing(false);
+        alert("Profile updated successfully!");
+      } else {
+        alert("Failed to update profile: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Something went wrong.");
+    }
   };
+  
+  
+  
 
-  const handleSave = () => {
-    localStorage.setItem("loggedInUser", JSON.stringify(form));
-    setUser(form);
-    setEditing(false);
-  };
+  if (!user) return <p>Loading profile...</p>;
 
-  if (!user) return null;
+  // Group orders by orderID
+  const groupedOrders = Object.entries(
+    orders.reduce((acc, orderItem) => {
+      if (!acc[orderItem.orderID]) {
+        acc[orderItem.orderID] = {
+          orderDate: orderItem.orderDate,
+          totalAmount: orderItem.totalAmount,
+          status: orderItem.status,
+          items: []
+        };
+      }
+      acc[orderItem.orderID].items.push({
+        productName: orderItem.productName,
+        quantity: orderItem.quantity
+      });
+      return acc;
+    }, {})
+  );
 
   return (
-    <main>
-      <h2>👤 Profile</h2>
+    <main style={{ padding: "2rem" }}>
+      <h2>👤 Your Profile</h2>
 
-      {editing ? (
+      <section style={{ marginBottom: "2rem" }}>
+        <h3>Account Information</h3>
+        <p><strong>Name:</strong> {user.firstname} {user.lastname}</p>
+        <p><strong>Email:</strong> {user.username}</p>
+        <p><strong>Address:</strong> {user.address}</p>
+
+        {!editing ? (
+  <button onClick={() => {
+    setEditing(true);
+    setEditForm({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      address: user.address,
+      username: user.username,
+      password: "" // New password input, starts empty
+    });
+    
+    
+  }} style={{ marginTop: "1rem" }}>
+    Edit Info
+  </button>
+) : (
   <form
   onSubmit={(e) => {
     e.preventDefault();
-    handleSave();
+    handleSaveChanges();
   }}
+  style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}
 >
-  <label>
-    First Name:
-    <input
-      name="firstName"
-      placeholder={user.firstName}
-      onChange={handleChange}
-    />
-  </label>
-
-  <label>
-    Last Name:
-    <input
-      name="lastName"
-      placeholder={user.lastName}
-      onChange={handleChange}
-    />
-  </label>
-
-  <label>
-    Email:
-    <input
-      type="email"
-      name="email"
-      placeholder={user.email}
-      onChange={handleChange}
-    />
-  </label>
-
-  <label>
-    Address:
-    <input
-      name="address"
-      placeholder={user.address}
-      onChange={handleChange}
-    />
-  </label>
-
+  <input
+    type="text"
+    name="firstname"
+    value={editForm.firstname || ""}
+    onChange={handleEditChange}
+    placeholder="First Name"
+  />
+  <input
+    type="text"
+    name="lastname"
+    value={editForm.lastname || ""}
+    onChange={handleEditChange}
+    placeholder="Last Name"
+  />
+  <input
+    type="text"
+    name="address"
+    value={editForm.address || ""}
+    onChange={handleEditChange}
+    placeholder="Address"
+  />
+  <input
+    type="email"
+    name="username"
+    value={editForm.username || ""}
+    onChange={handleEditChange}
+    placeholder="Email"
+  />
+  <input
+    type="password"
+    name="password"
+    value={editForm.password || ""}
+    onChange={handleEditChange}
+    placeholder="New Password"
+  />
   <button type="submit">Save Changes</button>
 </form>
 
-) : (
-  <>
-    <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
-    <p><strong>Email:</strong> {user.email}</p>
-    <p><strong>Address:</strong> {user.address}</p>
-    <button onClick={handleEdit} style={{ marginTop: "1rem" }}>Edit Info</button>
-  </>
+
 )}
 
+      </section>
 
-      <h3 style={{ marginTop: "2rem" }}>📦 Your Orders</h3>
-      {orders.length === 0 ? (
-        <p>No orders yet.</p>
-      ) : (
-        orders.map((order, i) => (
-          <div key={i} style={{ border: "1px solid #ddd", padding: "1rem", margin: "1rem 0", borderRadius: "6px" }}>
-            <p><strong>Order ID:</strong> {order.orderId}</p>
-            <p><strong>Total:</strong> ${order.total}</p>
-            <p><strong>Date:</strong> {order.date}</p>
-            <ul>
-              {order.items.map((item, j) => (
-                <li key={j}>{item.name} - ${item.price.toFixed(2)}</li>
-              ))}
-            </ul>
-          </div>
-        ))
-      )}
+      <section>
+        <h3>📦 Order History</h3>
+        {groupedOrders.length > 0 ? (
+          groupedOrders.map(([orderID, order], index) => (
+            <div key={index} style={{
+              background: "#fff",
+              padding: "1rem",
+              marginBottom: "1rem",
+              borderRadius: "8px",
+              boxShadow: "0 5px 10px rgba(0,0,0,0.05)"
+            }}>
+              <p><strong>Order ID:</strong> {orderID}</p>
+              <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
+              <p><strong>Status:</strong> {order.status}</p>
+              <p><strong>Total:</strong> ${Number(order.totalAmount).toFixed(2)}</p>
+              <div style={{ marginTop: "0.5rem" }}>
+                <strong>Items:</strong>
+                <ul>
+                  {order.items.map((item, idx) => (
+                    <li key={idx}>
+                      {item.productName} × {item.quantity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No orders found yet.</p>
+        )}
+      </section>
 
-      <button onClick={handleLogout} style={{ marginTop: "2rem", background: "red", color: "white", padding: "0.75rem 1.5rem", border: "none", borderRadius: "8px" }}>
+      <button onClick={() => {
+        localStorage.removeItem("loggedInUser");
+        navigate("/");
+      }} style={{
+        marginTop: "2rem",
+        padding: "0.75rem 1.5rem",
+        background: "red",
+        color: "white",
+        border: "none",
+        borderRadius: "8px"
+      }}>
         Logout
       </button>
     </main>

@@ -6,18 +6,32 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
-      alert("Invalid credentials");
-      return;
-    }
+  
+    const response = await fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username: email, password }) // Important!
+    });
+  
+    const result = await response.json();
 
-    localStorage.setItem("loggedInUser", JSON.stringify(savedUser));
-    alert("Welcome back!");
-    navigate("/cart");
+if (result.success) {
+  const userWithUsername = {
+    ...result.user,
+    username: result.user.username  // Keep username/email visible
   };
+  localStorage.setItem("loggedInUser", JSON.stringify(userWithUsername));
+  navigate("/cart");
+} else {
+  alert("Login failed: " + result.error);
+}
+
+  };
+  
 
   return (
     <main>

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 export default function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -17,24 +16,41 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+  
+    const payload = {
+      username: form.email,   // 💥 MAP email ➔ username automatically
+      password: form.password,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      address: form.address
+    };
+  
+    const response = await fetch("http://localhost:5000/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+  
+    const result = await response.json();
+  
+    if (result.success) {
+      alert("Account created!");
+      navigate("/login");
+    } else {
+      alert("Registration failed: " + result.error);
     }
-
-    // Simulate saving user data
-    localStorage.setItem("user", JSON.stringify(form));
-    alert("Account created!");
-    navigate("/login");
   };
+  
+  
 
   return (
     <main>
       <h2>Create Your Account</h2>
       <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" required onChange={handleChange} />
         <input type="email" name="email" placeholder="Email" required onChange={handleChange} />
         <input type="password" name="password" placeholder="Password" required onChange={handleChange} />
         <input type="password" name="confirmPassword" placeholder="Confirm Password" required onChange={handleChange} />

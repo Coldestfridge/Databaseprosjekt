@@ -4,120 +4,159 @@ import { useNavigate } from "react-router-dom";
 export default function Cart() {
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState(null);
-  const [toast, setToast] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (storedCart.length === 0) {
-      navigate("/empty-cart");
+    const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (storedUser) {
+      setUser(storedUser);
+      reloadCart(storedUser.userID);
+    }
+  }, []);
+
+  const reloadCart = async (userID) => {
+    const res = await fetch(`http://localhost:5000/api/cart/get/${userID}`);
+    const data = await res.json();
+    if (data.success) {
+      setCart(data.items);
     } else {
-      setCart(storedCart);
-    }
-
-    const loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
-    setUser(loggedIn || null);
-  }, [navigate]);
-
-  const total = cart.reduce((acc, item) => acc + (item.price * (item.quantity || 1)), 0).toFixed(2);
-
-
-  const removeItem = (index) => {
-    const newCart = [...cart];
-    newCart.splice(index, 1);
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    showToast("Item removed from cart.");
-
-    if (newCart.length === 0) {
-      navigate("/empty-cart");
+      setCart([]);
     }
   };
 
-  const clearCart = () => {
-    localStorage.removeItem("cart");
-    setCart([]);
-    showToast("Cart cleared.");
-    navigate("/empty-cart");
-  };
+  if (!cart) return <p>Loading cart...</p>;
 
-  const placeOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!user) {
+      alert("You must be logged in to place an order.");
       navigate("/login");
       return;
     }
-  
-    const orderDetails = {
-      items: cart,
-      user,
-      total,
-      orderId: 'EM' + Math.floor(Math.random() * 100000),
-      date: new Date().toLocaleString()
-    };
-  
-    // Save to order history
-    const prevOrders = JSON.parse(localStorage.getItem("orders")) || [];
-    localStorage.setItem("orders", JSON.stringify([...prevOrders, orderDetails]));
-  
-    localStorage.setItem("lastOrder", JSON.stringify(orderDetails));
-    localStorage.removeItem("cart");
-    navigate("/order-confirmation");
+
+    const items = cart.map(item => ({
+      productID: item.productID,
+      quantity: item.quantity || 1
+    }));
+
+    const totalAmount = cart.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0);
+
+    const response = await fetch("http://localhost:5000/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        userID: user.userID,
+        totalAmount: totalAmount,
+        items: items
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert("Order placed successfully!");
+
+      // Clear cart from backend
+      await fetch(`http://localhost:5000/api/cart/clear/${user.userID}`, {
+        method: "DELETE"
+      });
+
+      setCart([]);
+      navigate("/profile");
+    } else {
+      alert("Order failed: " + result.error);
+    }
   };
 
-  const updateQuantity = (index, qty) => {
-    const newCart = [...cart];
-    newCart[index].quantity = qty;
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+  const handleIncrease = async (productID) => {
+    await fetch('http://localhost:5000/api/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userID: user.userID,
+        productID: productID,
+        quantity: 1
+      })
+    });
+    reloadCart(user.userID);
   };
-  
-  
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(""), 3000);
+  const handleDecrease = async (productID) => {
+    await fetch('http://localhost:5000/api/cart/decrease', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userID: user.userID,
+        productID: productID
+      })
+    });
+    reloadCart(user.userID);
   };
+
+  const handleRemove = async (productID) => {
+    await fetch(`http://localhost:5000/api/cart/remove/${user.userID}/${productID}`, {
+      method: 'DELETE'
+    });
+    reloadCart(user.userID);
+  };
+
+  const totalPrice = cart.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0).toFixed(2);
 
   return (
-    <main>
-      <h2>Your Cart</h2>
+    <main style={{ padding: "2rem" }}>
+      <h2>🛒 Your Cart</h2>
 
-      {toast && <div style={{ background: "#2563eb", color: "white", padding: "0.5rem", marginBottom: "1rem", borderRadius: "6px" }}>{toast}</div>}
+      <div style={{ marginBottom: "2rem" }}>
+        {cart.length > 0 ? (
+          cart.map((item, index) => (
+            <div key={index} style={{
+              background: "#fff",
+              padding: "1rem",
+              marginBottom: "1rem",
+              borderRadius: "8px",
+              boxShadow: "0 5px 10px rgba(0,0,0,0.05)"
+            }}>
+              <h3>{item.name}</h3>
+              <p><strong>Price:</strong> ${Number(item.price).toFixed(2)}</p>
+              <p><strong>Quantity:</strong> {item.quantity}</p>
 
-      {cart.map((item, i) => (
-  <div key={i} style={{ marginBottom: "1rem" }}>
-    <strong>{item.name}</strong>: ${item.price.toFixed(2)}<br/>
-    Quantity:
-    <input type="number" value={item.quantity || 1} min="1"
-      onChange={(e) => updateQuantity(i, Number(e.target.value))}
-      style={{ width: "60px", marginLeft: "1rem" }}
-    />
-    <button onClick={() => removeItem(i)} style={{ marginLeft: "1rem", background: "red", color: "white", border: "none", padding: "0.3rem 0.6rem", borderRadius: "4px" }}>
-      Remove
-    </button>
-  </div>
-))}
+              <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                <button onClick={() => handleIncrease(item.productID)}>➕</button>
+                <button onClick={() => handleDecrease(item.productID)}>➖</button>
+                <button onClick={() => handleRemove(item.productID)}>❌</button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No products in your cart yet.</p>
+        )}
+      </div>
 
-      <p><strong>Total:</strong> ${total}</p>
-      <p><strong>Order ID:</strong> EM{Math.floor(Math.random() * 100000)}</p>
+      <h3>Total: ${totalPrice}</h3>
 
       {user ? (
-        <div>
-          <h3>Shipping Info</h3>
-          <p>{user.firstName} {user.lastName}</p>
-          <p>{user.email}</p>
+        <div style={{ marginTop: "2rem" }}>
+          <h4>Shipping To:</h4>
+          <p><strong>{user.firstname} {user.lastname}</strong></p>
           <p>{user.address}</p>
-          <button onClick={placeOrder}>Place Order</button>
+          <button onClick={handlePlaceOrder} style={{
+            marginTop: "1rem",
+            padding: "1rem",
+            backgroundColor: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            fontWeight: "bold"
+          }}>
+            Place Order
+          </button>
         </div>
       ) : (
-        <p>Please <a href="/login">login</a> to complete your order</p>
+        <div style={{ marginTop: "2rem" }}>
+          <p>You must <a href="/login">log in</a> to place an order.</p>
+        </div>
       )}
-
-      <button onClick={clearCart} style={{ marginTop: "1rem", background: "#555", color: "white", padding: "0.6rem", borderRadius: "6px", border: "none" }}>
-        Clear Cart
-      </button>
     </main>
   );
 }
-
-  
