@@ -22,10 +22,10 @@ INSERT INTO `product` (`categoryID`, `brandID`, `name`, `description`, `price`, 
 (5, 6, 'Philips Oneblade Pro 360 QP6542', '90 minutes use time, OneBlade-technology, Waterproof', 699.00, 100);
 
 INSERT INTO `loginDetails` (`username`, `password`) VALUES
-('ola.normann@icloud.com', ''),
-('kari.traa@gmail.com', ''),
-('john.doe@hotmail.com', ''),
-('ravi.beas@outlook.com', '');
+('ola.normann@icloud.com', '$2b$10$FB7Z3Vt4DUvShOw1Px9uWudFY0c5o38O2sn/8GmceXKz3nSpEGjsu'),
+('kari.traa@gmail.com', '$2b$10$VvIsqU6PFbI3xBiEJ29Q7uEqQ8mOjTRg9JQ4xXcwN6DPCo8GsmcIC'),
+('john.doe@hotmail.com', '$2b$10$XTosTqnr2D1vJ1CCFy2ct.DD7Fpu7W4eZVXk6rTAAnWzv4zNhWJrK'),
+('ravi.beas@outlook.com', '$2b$10$tQFDbVJPXHiddu2vXD54TOOh.xYMK/NxrFfrbnv1PHk/.XMDKRnvG');
 
 INSERT INTO `user` (`username`, `isPrivileged`) VALUES
 ('ola.normann@icloud.com', FALSE),
@@ -72,6 +72,4 @@ INSERT INTO `review` (`productID`, `userID`, `date`, `text`, `rating`) VALUES
 (1, 1, '2025-04-01', 'This is a great product', 5),
 (2, 2, '2025-04-02', 'This is an ok product', 4),
 (3, 3, '2025-04-03', 'This is a bad product', 1),
-(4, 4, '2025-04-04', 'This is a great product', 5),
-(5, 5, '2025-04-05', 'This is a meh product', 3),
-(6, 6, '2025-04-06', 'This is a not so good product', 2);
+(4, 4, '2025-04-04', 'This is a great product', 5);

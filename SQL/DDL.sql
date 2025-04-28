@@ -186,5 +186,5 @@ FROM ((`payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`)) JOIN
 CREATE ROLE `customer`;
 CREATE ROLE `employee`;
 
-GRANT SELECT ON `electromart.product-view` TO `customer`;
+GRANT SELECT ON `product_view` TO `customer`;
 GRANT SELECT, INSERT, UPDATE, DELETE ON `electromart`.* TO `employee`;
