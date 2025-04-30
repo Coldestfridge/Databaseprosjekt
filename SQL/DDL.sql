@@ -186,6 +186,13 @@ CREATE VIEW `payment_view` AS
 SELECT `payment`.`paymentID`, `payment`.`orderID`, `payment`.`paymentMethod`, `payment`.`amount`, `payment`.`paymentDate`, `payment`.`status`, `order`.`userID` AS `orderUserID`
 FROM `payment` JOIN `order` ON (`payment`.`orderID` = `order`.`orderID`);
 
+DROP VIEW IF EXISTS `cart_view`;
+CREATE VIEW `cart_view` AS
+SELECT `cart`.`userID`, `cart`.`status`, `cartItem`.`productID`, `cartItem`.`quantity`, `product`.`name` AS `productName`, `product`.`price` AS `productPrice`
+FROM `cart`
+JOIN `cartItem` ON (`cart`.`userID` = `cartItem`.`cartID`)
+JOIN `product` ON (`cartItem`.`productID` = `product`.`productID`);
+
 -- CREATE ROLES AND PERMISSIONS
 
 CREATE ROLE `customer`;
