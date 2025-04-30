@@ -198,5 +198,14 @@ JOIN `product` ON (`cartItem`.`productID` = `product`.`productID`);
 CREATE ROLE `customer`;
 CREATE ROLE `employee`;
 
+-- CUSTOMER PERMISSIONS
 GRANT SELECT ON `product_view` TO `customer`;
-GRANT SELECT, INSERT, UPDATE, DELETE ON `electromart`.* TO `employee`;
+GRANT SELECT ON `order_view` TO `customer`;
+GRANT SELECT ON `payment_view` TO `customer`;
+GRANT SELECT ON `cart_view` TO `customer`;
+
+-- EMPLOYEE PERMISSIONS
+GRANT SELECT, INSERT, UPDATE, DELETE ON `product_view` TO `employee`;
+GRANT SELECT, INSERT, UPDATE, DELETE ON `order_view` TO `employee`;
+GRANT SELECT, INSERT, UPDATE, DELETE ON `payment_view` TO `employee`;
+GRANT SELECT, INSERT, UPDATE, DELETE ON `cart_view` TO `employee`;
