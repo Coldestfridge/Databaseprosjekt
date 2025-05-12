@@ -9,10 +9,12 @@ const router = express.Router();
 router.get('/products', async (req, res) => {
   try {
     const [products] = await pool.query(
-      `SELECT p.*, c.name AS categoryName, b.name AS brandName
+      /*`SELECT p.*, c.name AS categoryName, b.name AS brandName
        FROM product p
        JOIN category c ON p.categoryID = c.categoryID
        JOIN brand b ON p.brandID = b.brandID`
+       */
+       `SELECT * FROM product_view` 
     );
     res.json(products);
   } catch (err) {

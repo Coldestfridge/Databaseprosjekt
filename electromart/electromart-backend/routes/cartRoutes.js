@@ -38,8 +38,27 @@ router.post('/add', async (req, res) => {
   }
 });
 
-// Get user's cart
+
 router.get('/get/:userID', async (req, res) => {
+  const { userID } = req.params;
+
+  try {
+    const [cartItems] = await pool.query(
+      `SELECT productID, quantity, productName, productPrice 
+       FROM cart_view 
+       WHERE userID = ?`,
+      [userID]
+    );
+
+    res.json({ success: true, items: cartItems });
+  } catch (err) {
+    console.error('Fetching cart failed:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Get user's cart
+/*router.get('/get/:userID', async (req, res) => {
   const { userID } = req.params;
   try {
     const [items] = await pool.query(
@@ -56,6 +75,7 @@ router.get('/get/:userID', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+*/
 
 // Clear cart after order placed
 router.delete('/clear/:userID', async (req, res) => {

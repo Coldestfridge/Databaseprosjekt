@@ -48,8 +48,31 @@ router.post('/order', async (req, res) => {
   }
 });
 
-// ✅ Fetch Orders for a User
 router.get('/order', async (req, res) => {
+  const { userID } = req.query;
+
+  try {
+    const [orders] = await pool.query(
+      `SELECT o.orderID, o.orderDate, o.totalAmount, o.status, 
+              oi.productID, oi.quantity, p.name AS productName 
+       FROM order_view o
+       JOIN orderItem oi ON o.orderID = oi.orderID
+       JOIN product p ON oi.productID = p.productID
+       WHERE o.userID = ?
+       ORDER BY o.orderDate DESC`,
+      [userID]
+    );
+
+    res.json(orders);
+  } catch (err) {
+    console.error('Fetching orders failed:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// ✅ Fetch Orders for a User
+/*router.get('/order', async (req, res) => {
   const { userID } = req.query;
   try {
     const [orders] = await pool.query(
@@ -69,5 +92,6 @@ router.get('/order', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+*/
 
 export default router;

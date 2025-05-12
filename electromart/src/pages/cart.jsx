@@ -38,7 +38,7 @@ export default function Cart() {
       quantity: item.quantity || 1
     }));
 
-    const totalAmount = cart.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0);
+    const totalAmount = cart.reduce((acc, item) => acc + Number(item.productPrice) * item.quantity, 0);
 
     const response = await fetch("http://localhost:5000/api/order", {
       method: "POST",
@@ -101,7 +101,7 @@ export default function Cart() {
     reloadCart(user.userID);
   };
 
-  const totalPrice = cart.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0).toFixed(2);
+  const totalPrice = cart.reduce((acc, item) => acc + Number(item.productPrice) * item.quantity, 0).toFixed(2);
 
   return (
     <main style={{ padding: "2rem" }}>
@@ -117,8 +117,8 @@ export default function Cart() {
               borderRadius: "8px",
               boxShadow: "0 5px 10px rgba(0,0,0,0.05)"
             }}>
-              <h3>{item.name}</h3>
-              <p><strong>Price:</strong> ${Number(item.price).toFixed(2)}</p>
+              <h3>{item.productName}</h3>
+              <p><strong>Price:</strong> ${Number(item.productPrice).toFixed(2)}</p>
               <p><strong>Quantity:</strong> {item.quantity}</p>
 
               <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
