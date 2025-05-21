@@ -6,6 +6,7 @@ export default function Cart() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
+    // Check if user is logged in
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
         if (storedUser) {
@@ -34,13 +35,16 @@ export default function Cart() {
             return;
         }
 
+        // map the cart items
         const items = cart.map((item) => ({
             productID: item.productID,
             quantity: item.quantity || 1,
         }));
 
+        // Calculate total amount
         const totalAmount = cart.reduce((acc, item) => acc + Number(item.productPrice) * item.quantity, 0);
 
+        // Send order to backend
         const response = await fetch('http://localhost:5000/api/order', {
             method: 'POST',
             headers: {
@@ -70,6 +74,7 @@ export default function Cart() {
         }
     };
 
+    // Increase quantity of a product in the cart
     const handleIncrease = async (productID) => {
         await fetch('http://localhost:5000/api/cart/add', {
             method: 'POST',
@@ -83,6 +88,7 @@ export default function Cart() {
         reloadCart(user.userID);
     };
 
+    // Decrease quantity of a product in the cart
     const handleDecrease = async (productID) => {
         await fetch('http://localhost:5000/api/cart/decrease', {
             method: 'POST',
@@ -95,6 +101,7 @@ export default function Cart() {
         reloadCart(user.userID);
     };
 
+    // Remove a product from the cart
     const handleRemove = async (productID) => {
         await fetch(`http://localhost:5000/api/cart/remove/${user.userID}/${productID}`, {
             method: 'DELETE',
@@ -102,8 +109,10 @@ export default function Cart() {
         reloadCart(user.userID);
     };
 
+    // Calculate total price
     const totalPrice = cart.reduce((acc, item) => acc + Number(item.productPrice) * item.quantity, 0).toFixed(2);
 
+    // Serve the visible html
     return (
         <main style={{ padding: '2rem' }}>
             <h2>🛒 Your Cart</h2>

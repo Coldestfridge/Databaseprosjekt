@@ -97,6 +97,7 @@ export default function Profile() {
         }, {})
     );
 
+    // Serve the visible html
     return (
         <main style={{ padding: '2rem' }}>
             <h2>👤 Your Profile</h2>
@@ -122,7 +123,7 @@ export default function Profile() {
                                 lastname: user.lastname,
                                 address: user.address,
                                 username: user.username,
-                                password: '', // New password input, starts empty
+                                password: '',
                             });
                         }}
                         style={{ marginTop: '1rem' }}

@@ -38,6 +38,7 @@ export default function Home() {
         }
     };
 
+    // Serve the visible html
     return (
         <main>
             <h2>🛍️ Product Catalog</h2>

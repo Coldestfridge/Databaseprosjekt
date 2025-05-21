@@ -33,6 +33,7 @@ export default function Login() {
         }
     };
 
+    // Serve the visible html
     return (
         <main>
             <h2>Login</h2>

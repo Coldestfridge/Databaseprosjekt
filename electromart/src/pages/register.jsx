@@ -51,6 +51,7 @@ export default function Register() {
         }
     };
 
+    // Serve the visible html
     return (
         <main>
             <h2>Create Your Account</h2>
