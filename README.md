@@ -1,53 +1,63 @@
-\subsection{Deployment}
-The project uses XAMPP with phpMyAdmin as the database. XAMPP uses MySQL with MariaDB to build a functional database. XAMPP can be installed here: \texttt{https://www.apachefriends.org/}
+Deployment
 
-\textbf{1. Clone the project}
+The project uses XAMPP with phpMyAdmin as the database. XAMPP uses MySQL with MariaDB to build a functional database.
+XAMPP can be installed here: https://www.apachefriends.org/
+1. Clone the Project
 
 If you have the source code, skip this step and follow from step 2.
-Clone the program by using the following command:\\
-\begin{minted}[bgcolor=code-bg, linenos, style=vs]{bash}
+Clone the program by using the following command:
+
 git clone git@gitlab.stud.idi.ntnu.no:eirikalv/idatg2204-group-01.git
-\end{minted}
 
-\textbf{2. Install required packages}
+2. Install Required Packages
 
-Once the project is cloned, you can open it in Visual Studio Code or another editor program and install the required packages. It is required to run \mintinline{text}{npm install} in both the \mintinline{text}{ElectroMart} folder and the \mintinline{text}{ElectroMart_backend} folder. You do this by running the following commands, assuming you are in the project root:
-\begin{minted}[bgcolor=code-bg, linenos, style=vs]{bash}
+Once the project is cloned, you can open it in Visual Studio Code or another editor and install the required packages.
+Run the following commands from the project root:
+
 cd ElectroMart
 npm install
-cd ElectroMart-backend
+
+cd ../ElectroMart-backend
 npm install
-\end{minted}
-This will install all the required packages by reading the package.json file.
 
-\textbf{3. Initialize the database}
+This will install all the required packages by reading the package.json files.
+3. Initialize the Database
 
-This step requires XAMPP to be installed and the MySQL database server and Apache server started.
+This step requires XAMPP to be installed, and both the MySQL and Apache servers to be started.
 
-Once the dependencies are installed, you need to set up the database by copying the contents of the DDL.sql file into phpMyAdmin (Everything can be pasted at once). This will create the tables, set up relations, and add in roles, views, and permissions. 
+    Open phpMyAdmin
 
-\textbf{4. Populate the database}
+    Copy the contents of the DDL.sql file into the SQL window and execute it
 
-After the DDL.sql commands have been run, you need to insert data into the tables. Copy the contents in insertData.sql and paste them in phpMyAdmin. You should now see that data has been inserted into each table. Make sure that you are using the electromart database.
+This will create the tables, set up relations, and add roles, views, and permissions.
+4. Populate the Database
 
-\textbf{5. Start the services}
+After running DDL.sql, you need to insert data into the tables.
 
-When data is inserted you can finally run the project. This is done by opening two terminal windows either in your editor, or the terminal of your choice. 
+    Copy the contents of insertData.sql
 
-One terminal window needs to run the backend, which can be done by using the following commands, assuming you are in the project root:
-\begin{minted}[bgcolor=code-bg, linenos, style=vs]{bash}
+    Paste them into phpMyAdmin and run the script
+
+Make sure that you are using the electromart database.
+5. Start the Services
+
+After the data is inserted, you can run the project by opening two terminal windows (in your editor or terminal of choice).
+
+Terminal 1 – Start the backend:
+
 cd ElectroMart/ElectroMart-backend
 node server.js
-\end{minted}
 
-NB! The default port for our backend is 5000, this can cause some issues for MacOS, where the Airplay Receiver is listening on port 5000. To allow the backend to work, the port and its associated uses must be changed to another port.
+    Note: The default backend port is 5000. On macOS, this can conflict with the AirPlay Receiver. You may need to change the port in your code and settings.
 
-The other terminal window is used to run the frontend; the following commands assume you are in the project root:
-\begin{minted}[bgcolor=code-bg, linenos, style=vs]{bash}
+Terminal 2 – Start the frontend:
+
 cd ElectroMart
 npm run dev
-\end{minted}
 
-\textbf{6. Access the webpage}
+6. Access the Webpage
 
-Once the frontend runs, you will get the localhost URL and port logged to the terminal window, which can be clicked or pasted in your browser to access the website. 
+Once the frontend runs, a localhost URL with a port will be printed in the terminal.
+Click or paste that URL in your browser to access the website.
+
+
