@@ -14,20 +14,22 @@ git clone git@gitlab.stud.idi.ntnu.no:eirikalv/idatg2204-group-01.git
 Once the project is cloned, you can open it in Visual Studio Code or another editor and install the required packages.
 Run the following commands from the project root:
 
+```
 cd ElectroMart
 npm install
 
 cd ../ElectroMart-backend
 npm install
+```
 
 This will install all the required packages by reading the package.json files.
 3. Initialize the Database
 
 This step requires XAMPP to be installed, and both the MySQL and Apache servers to be started.
 
-    Open phpMyAdmin
+Open phpMyAdmin
 
-    Copy the contents of the DDL.sql file into the SQL window and execute it
+Copy the contents of the DDL.sql file into the SQL window and execute it
 
 This will create the tables, set up relations, and add roles, views, and permissions.
 4. Populate the Database
